@@ -27,5 +27,5 @@ resource cognitiveServicesAccount 'Microsoft.CognitiveServices/accounts@2023-05-
   tags: tags
 }
 
-output cognitiveServicesEndpoint string = empty(existingCognitiveServicesName) ? cognitiveServicesAccount.properties.endpoint : 'https://{existingCognitiveServicesName}.cognitiveservices.azure.com/'
-output cognitiveServicesApiKey string = empty(existingCognitiveServicesName) ? listKeys(cognitiveServicesAccount.id, '2023-05-01').key1 : ''
+output cognitiveServicesEndpoint string = empty(existingCognitiveServicesName) ? cognitiveServicesAccount.properties.endpoint : 'https://${existingCognitiveServicesName}.cognitiveservices.azure.com/'
+output cognitiveServicesId string = empty(existingCognitiveServicesName) ? cognitiveServicesAccount.id : ''

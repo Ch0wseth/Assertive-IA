@@ -1,31 +1,49 @@
-@description('The name of the Cognitive Services account.')
-param cognitiveServicesName string
+@description('Location for all resources.')
+param location string = resourceGroup().location
 
-@description('The location of the Cognitive Services account.')
-param location string
+@description('Unique name prefix for resources.')
+param namePrefix string
 
-@description('The SKU of the Cognitive Services account.')
-@allowed([
-  'F0' // Free SKU
-  'S0' // Standard SKU
-])
-param skuName string
-
-@description('Optional tags for the resource.')
+@description('Tags for all resources.')
 param tags object = {}
 
-@description('The name of the existing Cognitive Services account (optional).')
+@description('The name of an existing Cognitive Services account (optional).')
 param existingCognitiveServicesName string = ''
 
-resource cognitiveServicesAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' = if (empty(existingCognitiveServicesName)) {
-  name: cognitiveServicesName
-  location: location
-  kind: 'TextAnalytics'
-  sku: {
-    name: skuName
+module functionApp './modules/functionApp.bicep' = {
+  name: '${namePrefix}-functionApp'
+  params: {
+    functionAppName: '${namePrefix}-function'
+    location: location
+    appInsightsLocation: location
+    tags: tags
   }
-  tags: tags
 }
 
-output cognitiveServicesEndpoint string = empty(existingCognitiveServicesName) ? cognitiveServicesAccount.properties.endpoint : 'https://{existingCognitiveServicesName}.cognitiveservices.azure.com/'
-output cognitiveServicesApiKey string = empty(existingCognitiveServicesName) ? listKeys(cognitiveServicesAccount.id, '2023-05-01').key1 : ''
+module cognitiveServices './modules/cognitiveServices.bicep' = {
+  name: '${namePrefix}-text-analytics'
+  params: {
+    cognitiveServicesName: '${namePrefix}-textanalytics'
+    location: location
+    skuName: 'F0' // Default to free tier
+    tags: tags
+    existingCognitiveServicesName: existingCognitiveServicesName
+  }
+}
+
+// Configure Azure Function with Cognitive Services settings
+resource functionAppSettings 'Microsoft.Web/sites/config@2021-03-01' = {
+  name: '${namePrefix}-function/appsettings' // Use static name instead of dynamic outputs
+  properties: {
+    COGNITIVE_SERVICES_ENDPOINT: cognitiveServices.outputs.cognitiveServicesEndpoint
+    COGNITIVE_SERVICES_API_KEY: empty(existingCognitiveServicesName) ? listKeys(resourceId('Microsoft.CognitiveServices/accounts', cognitiveServices.name), '2023-05-01').key1 : '<MANUALLY_PROVIDED_API_KEY>'
+  }
+  dependsOn: [
+    functionApp
+    cognitiveServices
+  ]
+}
+
+// Outputs
+output functionAppUrl string = functionApp.outputs.functionAppUrl
+output cognitiveServicesEndpoint string = cognitiveServices.outputs.cognitiveServicesEndpoint
