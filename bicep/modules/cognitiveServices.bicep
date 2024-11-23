@@ -14,12 +14,6 @@ resource textAnalytics 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   sku: {
     name: skuName
   }
-  properties: {
-    apiProperties: {
-      disableLocalAuth: false
-    }
-  }
 }
 
 output cognitiveServicesEndpoint string = textAnalytics.properties.endpoint
-// Suppression de l'output pour la clé API
