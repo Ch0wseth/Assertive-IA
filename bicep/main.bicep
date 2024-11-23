@@ -10,6 +10,16 @@ param tags object = {}
 @description('The name of an existing Cognitive Services account (optional).')
 param existingCognitiveServicesName string = ''
 
+@description('The name of the Cognitive Services account.')
+param cognitiveServicesName string = '${namePrefix}-textanalytics'
+
+@description('The SKU of the Cognitive Services account.')
+@allowed([
+  'F0'
+  'S0'
+])
+param skuName string = 'F0' // Default to free tier
+
 module functionApp './modules/functionApp.bicep' = {
   name: '${namePrefix}-functionApp'
   params: {
@@ -23,9 +33,9 @@ module functionApp './modules/functionApp.bicep' = {
 module cognitiveServices './modules/cognitiveServices.bicep' = {
   name: '${namePrefix}-text-analytics'
   params: {
-    cognitiveServicesName: '${namePrefix}-textanalytics'
+    cognitiveServicesName: cognitiveServicesName
     location: location
-    skuName: 'F0' // Default to free tier
+    skuName: skuName
     tags: tags
     existingCognitiveServicesName: existingCognitiveServicesName
   }
@@ -33,10 +43,10 @@ module cognitiveServices './modules/cognitiveServices.bicep' = {
 
 // Configure Azure Function with Cognitive Services settings
 resource functionAppSettings 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: '${namePrefix}-function/appsettings' // Use static name instead of dynamic outputs
+  name: '${namePrefix}-function/appsettings'
   properties: {
     COGNITIVE_SERVICES_ENDPOINT: cognitiveServices.outputs.cognitiveServicesEndpoint
-    COGNITIVE_SERVICES_API_KEY: empty(existingCognitiveServicesName) ? listKeys(resourceId('Microsoft.CognitiveServices/accounts', cognitiveServices.name), '2023-05-01').key1 : '<MANUALLY_PROVIDED_API_KEY>'
+    COGNITIVE_SERVICES_API_KEY: empty(existingCognitiveServicesName) ? listKeys(resourceId('Microsoft.CognitiveServices/accounts', cognitiveServicesName), '2023-05-01').key1 : '<MANUALLY_PROVIDED_API_KEY>'
   }
   dependsOn: [
     functionApp

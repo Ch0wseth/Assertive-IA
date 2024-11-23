@@ -13,6 +13,9 @@
                 "Project": "AssertiveAI"
             }
         },
+        "existingCognitiveServicesName": {
+            "value": ""
+        },
         "cognitiveServicesName": {
             "value": "chowseth-assertiveai-textanalytics"
         },
