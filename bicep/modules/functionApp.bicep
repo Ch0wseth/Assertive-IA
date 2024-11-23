@@ -95,6 +95,11 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
     }
     httpsOnly: true
   }
+  dependsOn: [
+    storageAccount
+    hostingPlan
+    applicationInsights
+  ]
 }
 
 output functionAppUrl string = 'https://${functionApp.properties.defaultHostName}/api/'
