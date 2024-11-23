@@ -74,6 +74,10 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
         }
         {
+          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+        }
+        {
           name: 'WEBSITE_CONTENTSHARE'
           value: toLower(functionAppName)
         }
@@ -101,6 +105,7 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
     applicationInsights
   ]
 }
+
 
 output functionAppUrl string = 'https://${functionApp.properties.defaultHostName}/api/'
 output functionAppName string = functionApp.name

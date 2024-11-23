@@ -43,12 +43,13 @@ module cognitiveServices './modules/cognitiveServices.bicep' = {
   }
 }
 
-// Configurer Azure Function avec les paramètres de Cognitive Services
+// Configure Azure Function with Cognitive Services settings
 resource functionAppSettings 'Microsoft.Web/sites/config@2021-03-01' = {
   name: '${namePrefix}-function/appsettings'
   properties: {
     COGNITIVE_SERVICES_ENDPOINT: cognitiveServices.outputs.cognitiveServicesEndpoint
-    COGNITIVE_SERVICES_API_KEY: empty(existingCognitiveServicesName) ? listKeys(resourceId('Microsoft.CognitiveServices/accounts', cognitiveServicesName), '2023-05-01').key1 : '<MANUALLY_PROVIDED_API_KEY>'
+    // Remplacer la clé API manuellement après le déploiement, ou utiliser un workflow GitHub Actions pour la récupérer.
+    COGNITIVE_SERVICES_API_KEY: empty(existingCognitiveServicesName) ? '<API_KEY>' : '<MANUALLY_PROVIDED_API_KEY>'
   }
   dependsOn: [
     functionApp
