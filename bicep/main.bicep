@@ -14,9 +14,9 @@ module functionApp './modules/functionApp.bicep' = {
 }
 
 module cognitiveServices './modules/cognitiveServices.bicep' = {
-  name: '${namePrefix}-cognitive'
+  name: '${namePrefix}-text-analytics'
   params: {
-    cognitiveServicesName: '${namePrefix}-cognitive'
+    cognitiveServicesName: '${namePrefix}-textanalytics'
     location: location
   }
 }
@@ -26,4 +26,3 @@ output functionAppUrl string = functionApp.outputs.functionAppUrl
 output storageAccountName string = functionApp.outputs.storageAccountName
 output appInsightsInstrumentationKey string = functionApp.outputs.appInsightsInstrumentationKey
 output cognitiveServicesEndpoint string = cognitiveServices.outputs.cognitiveServicesEndpoint
-output cognitiveServicesApiKey string = cognitiveServices.outputs.cognitiveServicesApiKey

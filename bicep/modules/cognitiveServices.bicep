@@ -7,10 +7,10 @@ param location string
 @description('The SKU of the Cognitive Services account.')
 param skuName string = 'F0' // Free SKU
 
-resource cognitiveServicesAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
+resource textAnalytics 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   name: cognitiveServicesName
   location: location
-  kind: 'CognitiveServices'
+  kind: 'TextAnalytics' // Spécifie le service Text Analytics
   sku: {
     name: skuName
   }
@@ -21,5 +21,5 @@ resource cognitiveServicesAccount 'Microsoft.CognitiveServices/accounts@2023-05-
   }
 }
 
-output cognitiveServicesEndpoint string = cognitiveServicesAccount.properties.endpoint
-output cognitiveServicesApiKey string = listKeys(cognitiveServicesAccount.id, '2023-05-01').key1
+output cognitiveServicesEndpoint string = textAnalytics.properties.endpoint
+// Suppression de l'output pour la clé API
