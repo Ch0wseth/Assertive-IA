@@ -11,20 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Étape 1 : Récupérer le Code
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4 # Utilisation de la dernière version
 
+    # Étape 2 : Configurer Azure CLI
     - name: Setup Azure CLI
-      uses: azure/cli@v1
+      uses: azure/cli@v1 # Azure CLI est déjà inclus dans l'action
 
+    # Étape 3 : Connexion à Azure
     - name: Login to Azure
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }} # Utilisation du secret pour s'authentifier
 
+    # Étape 4 : Déployer l'Infrastructure avec Bicep
     - name: Deploy Infrastructure
       run: |
+        echo "Démarrage du déploiement dans le groupe de ressources : ${{ secrets.RESOURCE_GROUP }}"
         az deployment group create \
           --resource-group ${{ secrets.RESOURCE_GROUP }} \
           --template-file bicep/main.bicep \
-          --parameters @bicep/parameters/dev.parameters.json
+          --parameters @bicep/parameters/${{ secrets.ENVIRONMENT }}.parameters.json
