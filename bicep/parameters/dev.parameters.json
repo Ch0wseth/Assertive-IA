@@ -1,0 +1,11 @@
+{
+
+    "parameters": {
+        "location": {
+            "value": "West Europe"
+        },
+        "namePrefix": {
+            "value": "chowseth-assertiveai-azf"
+        }
+    }
+}
