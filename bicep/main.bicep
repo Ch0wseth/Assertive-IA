@@ -15,11 +15,12 @@ param cognitiveServicesName string = '${namePrefix}-textanalytics'
 
 @description('The SKU of the Cognitive Services account.')
 @allowed([
-  'F0'
-  'S0'
+  'F0' // Free SKU
+  'S0' // Standard SKU
 ])
-param skuName string = 'S0' // Default to free tier
+param skuName string = 'S0' // Default to standard tier
 
+// Création d'un module Function App
 module functionApp './modules/functionApp.bicep' = {
   name: '${namePrefix}-functionApp'
   params: {
@@ -30,18 +31,19 @@ module functionApp './modules/functionApp.bicep' = {
   }
 }
 
+// Module Cognitive Services
 module cognitiveServices './modules/cognitiveServices.bicep' = {
   name: 'deploy-cognitive-services'
   params: {
-    cognitiveServicesName: '${namePrefix}-textanalytics'
+    cognitiveServicesName: cognitiveServicesName
     location: location
-    skuName: 'S0'
+    skuName: skuName
     tags: tags
     existingCognitiveServicesName: existingCognitiveServicesName
   }
 }
 
-// Configure Azure Function with Cognitive Services settings
+// Configurer Azure Function avec les paramètres de Cognitive Services
 resource functionAppSettings 'Microsoft.Web/sites/config@2021-03-01' = {
   name: '${namePrefix}-function/appsettings'
   properties: {

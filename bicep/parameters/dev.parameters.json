@@ -9,18 +9,11 @@
         "tags": {
             "value": {
                 "Environment": "Development",
-                "Owner": "chowseth",
-                "Project": "AssertiveAI"
+                "Owner": "chowseth"
             }
         },
         "existingCognitiveServicesName": {
-            "value": ""
-        },
-        "cognitiveServicesName": {
             "value": "chowseth-assertiveai-textanalytics"
-        },
-        "skuName": {
-            "value": "S0"
         }
     }
 }
