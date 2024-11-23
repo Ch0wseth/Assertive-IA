@@ -18,7 +18,7 @@ param cognitiveServicesName string = '${namePrefix}-textanalytics'
   'F0'
   'S0'
 ])
-param skuName string = 'F0' // Default to free tier
+param skuName string = 'S0' // Default to free tier
 
 module functionApp './modules/functionApp.bicep' = {
   name: '${namePrefix}-functionApp'
@@ -35,7 +35,7 @@ module cognitiveServices './modules/cognitiveServices.bicep' = {
   params: {
     cognitiveServicesName: '${namePrefix}-textanalytics'
     location: location
-    skuName: 'F0'
+    skuName: 'S0'
     tags: tags
     existingCognitiveServicesName: existingCognitiveServicesName
   }
