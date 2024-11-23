@@ -31,11 +31,11 @@ module functionApp './modules/functionApp.bicep' = {
 }
 
 module cognitiveServices './modules/cognitiveServices.bicep' = {
-  name: '${namePrefix}-text-analytics'
+  name: 'deploy-cognitive-services'
   params: {
-    cognitiveServicesName: cognitiveServicesName
+    cognitiveServicesName: '${namePrefix}-textanalytics'
     location: location
-    skuName: skuName
+    skuName: 'F0'
     tags: tags
     existingCognitiveServicesName: existingCognitiveServicesName
   }
@@ -57,3 +57,4 @@ resource functionAppSettings 'Microsoft.Web/sites/config@2021-03-01' = {
 // Outputs
 output functionAppUrl string = functionApp.outputs.functionAppUrl
 output cognitiveServicesEndpoint string = cognitiveServices.outputs.cognitiveServicesEndpoint
+output cognitiveServicesId string = cognitiveServices.outputs.cognitiveServicesId
