@@ -5,15 +5,24 @@ param cognitiveServicesName string
 param location string
 
 @description('The SKU of the Cognitive Services account.')
-param skuName string = 'S0' // Free SKU
+@allowed([
+  'F0' // Free SKU
+  'S0' // Standard SKU
+])
+param skuName string
 
-resource textAnalytics 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
+@description('Optional tags for the resource.')
+param tags object = {}
+
+resource cognitiveServicesAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   name: cognitiveServicesName
   location: location
-  kind: 'TextAnalytics' // Spécifie le service Text Analytics
+  kind: 'TextAnalytics'
   sku: {
     name: skuName
   }
+  tags: tags
 }
 
-output cognitiveServicesEndpoint string = textAnalytics.properties.endpoint
+output cognitiveServicesEndpoint string = cognitiveServicesAccount.properties.endpoint
+output cognitiveServicesApiKey string = listKeys(cognitiveServicesAccount.id, '2023-05-01').key1

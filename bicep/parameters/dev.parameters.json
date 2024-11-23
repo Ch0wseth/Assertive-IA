@@ -6,6 +6,13 @@
         },
         "namePrefix": {
             "value": "chowseth-assertiveai"
+        },
+        "tags": {
+            "value": {
+                "Environment": "Development",
+                "Owner": "chowseth",
+                "Project": "AssertiveAI"
+            }
         }
     }
 }

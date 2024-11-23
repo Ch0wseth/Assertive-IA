@@ -15,6 +15,9 @@ param location string
 @description('Location for Application Insights')
 param appInsightsLocation string
 
+@description('Tags for all resources.')
+param tags object = {}
+
 var hostingPlanName = '${functionAppName}-plan'
 var applicationInsightsName = '${functionAppName}-ai'
 var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
@@ -31,6 +34,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
     supportsHttpsTrafficOnly: true
     defaultToOAuthAuthentication: true
   }
+  tags: tags
 }
 
 resource hostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
@@ -40,6 +44,18 @@ resource hostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
     name: 'Y1' // Consumption Plan SKU
     tier: 'Dynamic' // Consumption Plan Tier
   }
+  tags: tags
+}
+
+resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: applicationInsightsName
+  location: appInsightsLocation
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+    Request_Source: 'rest'
+  }
+  tags: tags
 }
 
 resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
@@ -83,16 +99,11 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
     }
     httpsOnly: true
   }
-}
-
-resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: applicationInsightsName
-  location: appInsightsLocation
-  kind: 'web'
-  properties: {
-    Application_Type: 'web'
-    Request_Source: 'rest'
-  }
+  dependsOn: [
+    storageAccount
+    hostingPlan
+    applicationInsights
+  ]
 }
 
 output functionAppUrl string = 'https://${functionApp.properties.defaultHostName}/api/'
