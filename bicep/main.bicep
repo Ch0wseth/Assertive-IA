@@ -22,7 +22,7 @@ module cognitiveServices './modules/cognitiveServices.bicep' = {
   params: {
     cognitiveServicesName: '${namePrefix}-textanalytics'
     location: location
-    skuName: 'F0'
+    skuName: 'S0'
     tags: tags
   }
 }
