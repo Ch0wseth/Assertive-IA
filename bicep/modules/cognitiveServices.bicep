@@ -5,7 +5,7 @@ param cognitiveServicesName string
 param location string
 
 @description('The SKU of the Cognitive Services account.')
-param skuName string = 'F0' // Free SKU
+param skuName string = 'S0' // Free SKU
 
 resource textAnalytics 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   name: cognitiveServicesName
