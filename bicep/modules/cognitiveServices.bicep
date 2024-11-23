@@ -14,7 +14,10 @@ param skuName string
 @description('Optional tags for the resource.')
 param tags object = {}
 
-resource cognitiveServicesAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
+@description('The name of the existing Cognitive Services account (optional).')
+param existingCognitiveServicesName string = ''
+
+resource cognitiveServicesAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' = if (empty(existingCognitiveServicesName)) {
   name: cognitiveServicesName
   location: location
   kind: 'TextAnalytics'
@@ -24,5 +27,5 @@ resource cognitiveServicesAccount 'Microsoft.CognitiveServices/accounts@2023-05-
   tags: tags
 }
 
-output cognitiveServicesEndpoint string = cognitiveServicesAccount.properties.endpoint
-output cognitiveServicesApiKey string = listKeys(cognitiveServicesAccount.id, '2023-05-01').key1
+output cognitiveServicesEndpoint string = empty(existingCognitiveServicesName) ? cognitiveServicesAccount.properties.endpoint : 'https://{existingCognitiveServicesName}.cognitiveservices.azure.com/'
+output cognitiveServicesApiKey string = empty(existingCognitiveServicesName) ? listKeys(cognitiveServicesAccount.id, '2023-05-01').key1 : ''

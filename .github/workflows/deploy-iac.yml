@@ -11,19 +11,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Étape 1 : Cloner le code
     - name: Checkout Code
       uses: actions/checkout@v4
 
+    # Étape 2 : Se connecter à Azure
     - name: Login to Azure
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    # Étape 3 : Valider les fichiers Bicep avant le déploiement
+    - name: Validate Bicep Files
+      uses: azure/cli@v1
+      with:
+        inlineScript: |
+          echo "Validation des fichiers Bicep..."
+          az deployment group validate \
+            --resource-group ${{ secrets.RESOURCE_GROUP }} \
+            --template-file bicep/main.bicep \
+            --parameters @bicep/parameters/dev.parameters.json
+
+    # Étape 4 : Déployer les fichiers Bicep
     - name: Deploy Infrastructure
       uses: azure/cli@v1
       with:
         inlineScript: |
-          echo "Démarrage du déploiement..."
+          echo "Déploiement des ressources..."
           az deployment group create \
             --resource-group ${{ secrets.RESOURCE_GROUP }} \
             --template-file bicep/main.bicep \
